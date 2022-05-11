@@ -1,4 +1,4 @@
-package com.music.projectmusicapi.repositories;
+package com.music.projectmusicapi.dao;
 
 import com.music.projectmusicapi.entities.ReservationEntity;
 import org.springframework.data.repository.CrudRepository;

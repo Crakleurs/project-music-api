@@ -17,6 +17,12 @@ public class UserEntity {
     @GeneratedValue
     private Long id;
 
+    @Column()
+    private String firstname;
+
+    @Column()
+    private String name;
+
     @Column(nullable = false)
     private String email;
 
@@ -24,7 +30,7 @@ public class UserEntity {
     private String password;
 
     @Column(nullable = false)
-    private Long coins;
+    private Float coins;
 
     @Column(nullable = false)
     private Boolean isAdmin;

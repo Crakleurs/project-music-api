@@ -1,4 +1,4 @@
-package com.music.projectmusicapi.repositories;
+package com.music.projectmusicapi.dao.image;
 
 import com.music.projectmusicapi.entities.ImageEntity;
 import org.springframework.data.repository.CrudRepository;

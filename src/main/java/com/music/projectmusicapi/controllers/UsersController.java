@@ -1,33 +1,36 @@
 package com.music.projectmusicapi.controllers;
 
+import com.music.projectmusicapi.dto.UserDto;
 import com.music.projectmusicapi.entities.UserEntity;
-import com.music.projectmusicapi.repositories.UserRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.music.projectmusicapi.services.UsersService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Validated
 @RequestMapping("users")
+@RequiredArgsConstructor
 public class UsersController {
-    private final UserRepository userRepository;
-    public UsersController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    private final UsersService usersService;
+
+    @PostMapping()
+    public UserEntity createUser(@RequestBody UserDto userDTO) {
+        return usersService.createUser(userDTO);
     }
 
-    @GetMapping("me")
-    public String hello() {
-        UserEntity test = new UserEntity();
-        test.setCoins((long) 100.0);
-        test.setEmail("eti.faviere@gmail.com");
-        test.setIsAdmin(false);
-        test.setIsBanned(true);
-        test.setPassword("salut");
-        userRepository.save(test);
-        return "Salut Etienne";
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        usersService.deleteUser(id);
     }
 
-    @GetMapping("all")
-    public Iterable<UserEntity> all() {
-        return userRepository.findAll();
+    @GetMapping("")
+    public Iterable<UserEntity> findAll() {
+        return usersService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public UserEntity findOne(@PathVariable Long id) {
+        return usersService.findOne(id);
     }
 }

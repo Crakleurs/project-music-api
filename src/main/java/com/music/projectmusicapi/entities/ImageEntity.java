@@ -4,10 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
@@ -22,4 +19,6 @@ public class ImageEntity {
     @Column(nullable = false)
     private String path;
 
+    @ManyToOne
+    private ArticleEntity article;
 }

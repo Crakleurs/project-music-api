@@ -20,7 +20,7 @@ public class ArticleEntity {
     @OneToMany
     private List<ImageEntity> images;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String description;
 
 }
