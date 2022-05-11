@@ -21,32 +21,33 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ImagesService {
     private final ImageRepository imageRepository;
-    private final ArticleRepository articleRepository;
+    private final ArticlesService articlesService;
 
     private final Path folder = Paths.get("files");
 
-
-    public StreamingResponseBody getImage(Long id) {
+    public ImageEntity getImage(Long id) {
         Optional<ImageEntity> imageEntity = this.imageRepository.findById(id);
         if (imageEntity.isEmpty())
             throw new HttpNotFoundException("L'image avec l'id " + id +" n'a pas été trouvée");
 
+        return imageEntity.get();
+    }
 
+    public StreamingResponseBody findImage(Long id) {
+        ImageEntity imageEntity = getImage(id);
         return outputStream -> {
-            Files.copy(this.folder.resolve(imageEntity.get().getPath()), outputStream);
+            Files.copy(this.folder.resolve(imageEntity.getPath()), outputStream);
         };
     }
 
 
     public Iterable<ImageEntity> createImages(Long articleId, ImageDto imageDto) {
-        Optional<ArticleEntity> articleEntity = this.articleRepository.findById(articleId);
-        if (articleEntity.isEmpty())
-            throw new HttpNotFoundException("L'article avec l'id " + articleId +" n'a pas été trouvé");
+        ArticleEntity articleEntity = this.articlesService.getArticle(articleId);
 
         List<ImageEntity> list = new ArrayList<>();
         Arrays.stream(imageDto.getFiles()).forEach((file) -> {
             try {
-                ImageEntity imageEntity = storeImage(articleEntity.get(), file);
+                ImageEntity imageEntity = storeImage(articleEntity, file);
                 list.add(imageEntity);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -67,13 +68,9 @@ public class ImagesService {
     }
 
     public void deleteImage(Long id) throws IOException {
-        Optional<ImageEntity> imageEntity = this.imageRepository.findById(id);
+        ImageEntity imageEntity = getImage(id);
 
-        if (imageEntity.isEmpty())
-            throw new HttpNotFoundException("L'image avec l'id " + id +" n'a pas été trouvée");
-
-
-        Files.delete(this.folder.resolve(imageEntity.get().getPath()));
+        Files.delete(this.folder.resolve(imageEntity.getPath()));
         this.imageRepository.deleteById(id);
     }
 

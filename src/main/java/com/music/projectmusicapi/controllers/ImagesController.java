@@ -19,7 +19,7 @@ public class ImagesController {
 
     @GetMapping("/{id}")
     public StreamingResponseBody getImage(@PathVariable Long id) throws IOException {
-        return this.imagesService.getImage(id);
+        return this.imagesService.findImage(id);
     }
 
     @DeleteMapping("/{id}")

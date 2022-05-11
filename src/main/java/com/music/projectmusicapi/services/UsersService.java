@@ -21,16 +21,13 @@ public class UsersService {
             throw new HttpBadRequestException("Les deux mots de passes sont différents");
 
         UserEntity userEntity = UserFactory.toUser(usersDTO);
-        return  this.userRepository.save(userEntity);
+        return this.userRepository.save(userEntity);
 
     }
 
     public void deleteUser(Long id) {
-        Optional<UserEntity> userEntity = this.userRepository.findById(id);
-        if (userEntity.isEmpty())
-            throw new HttpNotFoundException("L'utilisateur avec l'id " + id + "n'a pas été trouvé");
-
-        this.userRepository.delete(userEntity.get());
+        UserEntity userEntity = getUser(id);
+        this.userRepository.delete(userEntity);
     }
 
     public Iterable<UserEntity> findAll() {
@@ -38,12 +35,16 @@ public class UsersService {
     }
 
     public UserEntity findOne(Long id) {
+        return this.getUser(id);
+
+    }
+
+    public UserEntity getUser(Long id) {
         Optional<UserEntity> userEntity = this.userRepository.findById(id);
 
         if (userEntity.isEmpty())
             throw new HttpNotFoundException("L'utilisateur avec l'id " + id + "n'a pas été trouvé");
 
         return userEntity.get();
-
     }
 }

@@ -18,16 +18,19 @@ public class ArticlesService {
     private final ArticleRepository articleRepository;
     private final ImagesService imagesService;
 
-    public ArticleEntity findOne(Long id) {
+    public ArticleEntity getArticle(Long id) {
         Optional<ArticleEntity> articleEntity = this.articleRepository.findById(id);
         if (articleEntity.isEmpty())
             throw new HttpNotFoundException("L'article avec l'id " + id +" n'a pas été trouvé");
-
         return articleEntity.get();
     }
 
-    public Iterable<ArticleEntity> findAll() {
-        return this.articleRepository.findAll();
+    public ArticleEntity findOne(Long id) {
+        return getArticle(id);
+    }
+
+    public List<ArticleEntity> findAll() {
+        return (List<ArticleEntity>) this.articleRepository.findAll();
     }
 
     public ArticleEntity createArticle(ArticleDto articleDto) {
@@ -37,21 +40,17 @@ public class ArticlesService {
     }
 
     public void deleteArticle(Long id) {
-        Optional<ArticleEntity> articleEntity = this.articleRepository.findById(id);
-        if (articleEntity.isEmpty())
-            throw new HttpNotFoundException("L'article avec l'id " + id +" n'a pas été trouvé");
+        ArticleEntity articleEntity = getArticle(id);
 
-        List<ImageEntity> imageEntities = articleEntity.get().getImages();
+        List<ImageEntity> imageEntities = articleEntity.getImages();
         this.imagesService.deleteImages(imageEntities);
     }
 
 
     public ArticleEntity updateArticle(Long id, ArticleDto articleDto) {
-        Optional<ArticleEntity> articleEntity = this.articleRepository.findById(id);
-        if (articleEntity.isEmpty())
-            throw new HttpNotFoundException("L'article avec l'id " + id +" n'a pas été trouvé");
+        ArticleEntity articleEntity = getArticle(id);
 
-        articleEntity = Optional.of(ArticleFactory.updateToEntity(articleDto, articleEntity.get()));
-        return this.articleRepository.save(articleEntity.get());
+        ArticleFactory.updateToEntity(articleDto, articleEntity);
+        return this.articleRepository.save(articleEntity);
     }
 }
