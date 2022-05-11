@@ -5,12 +5,12 @@ import com.music.projectmusicapi.dao.article.ArticleRepository;
 import com.music.projectmusicapi.dto.ImageDto;
 import com.music.projectmusicapi.entities.ArticleEntity;
 import com.music.projectmusicapi.entities.ImageEntity;
+import com.music.projectmusicapi.exceptions.HttpNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.xml.ws.http.HTTPException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,10 +26,11 @@ public class ImagesService {
     private final Path folder = Paths.get("files");
 
 
-    public StreamingResponseBody getImage(Long id) throws IOException {
+    public StreamingResponseBody getImage(Long id) {
         Optional<ImageEntity> imageEntity = this.imageRepository.findById(id);
-        if (!imageEntity.isPresent())
-            throw new HTTPException(404);
+        if (imageEntity.isEmpty())
+            throw new HttpNotFoundException("L'image avec l'id " + id +" n'a pas été trouvée");
+
 
         return outputStream -> {
             Files.copy(this.folder.resolve(imageEntity.get().getPath()), outputStream);
@@ -39,8 +40,8 @@ public class ImagesService {
 
     public Iterable<ImageEntity> createImages(Long articleId, ImageDto imageDto) {
         Optional<ArticleEntity> articleEntity = this.articleRepository.findById(articleId);
-        if (!articleEntity.isPresent())
-            throw new HTTPException(400);
+        if (articleEntity.isEmpty())
+            throw new HttpNotFoundException("L'article avec l'id " + articleId +" n'a pas été trouvé");
 
         List<ImageEntity> list = new ArrayList<>();
         Arrays.stream(imageDto.getFiles()).forEach((file) -> {
@@ -68,8 +69,9 @@ public class ImagesService {
     public void deleteImage(Long id) throws IOException {
         Optional<ImageEntity> imageEntity = this.imageRepository.findById(id);
 
-        if (!imageEntity.isPresent())
-            throw new HTTPException(404);
+        if (imageEntity.isEmpty())
+            throw new HttpNotFoundException("L'image avec l'id " + id +" n'a pas été trouvée");
+
 
         Files.delete(this.folder.resolve(imageEntity.get().getPath()));
         this.imageRepository.deleteById(id);

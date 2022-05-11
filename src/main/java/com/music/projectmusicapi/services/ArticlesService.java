@@ -5,10 +5,10 @@ import com.music.projectmusicapi.dto.ArticleDto;
 import com.music.projectmusicapi.entities.ArticleEntity;
 import com.music.projectmusicapi.dao.article.ArticleRepository;
 import com.music.projectmusicapi.entities.ImageEntity;
+import com.music.projectmusicapi.exceptions.HttpNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.xml.ws.http.HTTPException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +20,8 @@ public class ArticlesService {
 
     public ArticleEntity findOne(Long id) {
         Optional<ArticleEntity> articleEntity = this.articleRepository.findById(id);
-        if (!articleEntity.isPresent())
-            throw new HTTPException(400);
+        if (articleEntity.isEmpty())
+            throw new HttpNotFoundException("L'article avec l'id " + id +" n'a pas été trouvé");
 
         return articleEntity.get();
     }
@@ -38,8 +38,8 @@ public class ArticlesService {
 
     public void deleteArticle(Long id) {
         Optional<ArticleEntity> articleEntity = this.articleRepository.findById(id);
-        if (!articleEntity.isPresent())
-            throw new HTTPException(400);
+        if (articleEntity.isEmpty())
+            throw new HttpNotFoundException("L'article avec l'id " + id +" n'a pas été trouvé");
 
         List<ImageEntity> imageEntities = articleEntity.get().getImages();
         this.imagesService.deleteImages(imageEntities);
@@ -48,8 +48,8 @@ public class ArticlesService {
 
     public ArticleEntity updateArticle(Long id, ArticleDto articleDto) {
         Optional<ArticleEntity> articleEntity = this.articleRepository.findById(id);
-        if (!articleEntity.isPresent())
-            throw new HTTPException(400);
+        if (articleEntity.isEmpty())
+            throw new HttpNotFoundException("L'article avec l'id " + id +" n'a pas été trouvé");
 
         articleEntity = Optional.of(ArticleFactory.updateToEntity(articleDto, articleEntity.get()));
         return this.articleRepository.save(articleEntity.get());

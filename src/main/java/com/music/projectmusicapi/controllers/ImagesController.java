@@ -14,7 +14,7 @@ import java.io.IOException;
 @Validated
 @RequestMapping("image")
 @RequiredArgsConstructor
-public class ImageController {
+public class ImagesController {
     private final ImagesService imagesService;
 
     @GetMapping("/{id}")
