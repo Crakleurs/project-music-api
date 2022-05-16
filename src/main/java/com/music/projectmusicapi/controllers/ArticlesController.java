@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RequestMapping("article")
 @RequiredArgsConstructor
-public class ArticleController {
+public class ArticlesController {
     private final ArticlesService articlesService;
 
     @GetMapping("/{id}")

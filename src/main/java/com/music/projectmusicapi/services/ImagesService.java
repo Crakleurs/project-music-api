@@ -5,12 +5,12 @@ import com.music.projectmusicapi.dao.article.ArticleRepository;
 import com.music.projectmusicapi.dto.ImageDto;
 import com.music.projectmusicapi.entities.ArticleEntity;
 import com.music.projectmusicapi.entities.ImageEntity;
+import com.music.projectmusicapi.exceptions.HttpNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.xml.ws.http.HTTPException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,31 +21,33 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ImagesService {
     private final ImageRepository imageRepository;
-    private final ArticleRepository articleRepository;
+    private final ArticlesService articlesService;
 
     private final Path folder = Paths.get("files");
 
-
-    public StreamingResponseBody getImage(Long id) throws IOException {
+    public ImageEntity getImage(Long id) {
         Optional<ImageEntity> imageEntity = this.imageRepository.findById(id);
-        if (!imageEntity.isPresent())
-            throw new HTTPException(404);
+        if (imageEntity.isEmpty())
+            throw new HttpNotFoundException("L'image avec l'id " + id +" n'a pas été trouvée");
 
+        return imageEntity.get();
+    }
+
+    public StreamingResponseBody findImage(Long id) {
+        ImageEntity imageEntity = getImage(id);
         return outputStream -> {
-            Files.copy(this.folder.resolve(imageEntity.get().getPath()), outputStream);
+            Files.copy(this.folder.resolve(imageEntity.getPath()), outputStream);
         };
     }
 
 
     public Iterable<ImageEntity> createImages(Long articleId, ImageDto imageDto) {
-        Optional<ArticleEntity> articleEntity = this.articleRepository.findById(articleId);
-        if (!articleEntity.isPresent())
-            throw new HTTPException(400);
+        ArticleEntity articleEntity = this.articlesService.getArticle(articleId);
 
         List<ImageEntity> list = new ArrayList<>();
         Arrays.stream(imageDto.getFiles()).forEach((file) -> {
             try {
-                ImageEntity imageEntity = storeImage(articleEntity.get(), file);
+                ImageEntity imageEntity = storeImage(articleEntity, file);
                 list.add(imageEntity);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -66,12 +68,9 @@ public class ImagesService {
     }
 
     public void deleteImage(Long id) throws IOException {
-        Optional<ImageEntity> imageEntity = this.imageRepository.findById(id);
+        ImageEntity imageEntity = getImage(id);
 
-        if (!imageEntity.isPresent())
-            throw new HTTPException(404);
-
-        Files.delete(this.folder.resolve(imageEntity.get().getPath()));
+        Files.delete(this.folder.resolve(imageEntity.getPath()));
         this.imageRepository.deleteById(id);
     }
 

@@ -14,12 +14,12 @@ import java.io.IOException;
 @Validated
 @RequestMapping("image")
 @RequiredArgsConstructor
-public class ImageController {
+public class ImagesController {
     private final ImagesService imagesService;
 
     @GetMapping("/{id}")
     public StreamingResponseBody getImage(@PathVariable Long id) throws IOException {
-        return this.imagesService.getImage(id);
+        return this.imagesService.findImage(id);
     }
 
     @DeleteMapping("/{id}")
