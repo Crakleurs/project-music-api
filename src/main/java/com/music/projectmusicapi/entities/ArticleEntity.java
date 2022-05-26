@@ -17,6 +17,9 @@ public class ArticleEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private Float priceByDay;
+
     @OneToMany
     private List<ImageEntity> images;
 

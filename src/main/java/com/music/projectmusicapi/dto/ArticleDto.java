@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class ArticleDto {
@@ -12,4 +14,10 @@ public class ArticleDto {
 
     @NonNull
     String description;
+
+    @NonNull
+    Float priceByDay;
+
+    @NonNull
+    List<Long> tags;
 }

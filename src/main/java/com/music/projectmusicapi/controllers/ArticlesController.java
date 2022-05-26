@@ -30,7 +30,7 @@ public class ArticlesController {
     }
 
     @PatchMapping("/{id}")
-    public ArticleEntity createArticle(@PathVariable Long id, @RequestBody ArticleDto articleDto) {
+    public ArticleEntity editArticle(@PathVariable Long id, @RequestBody ArticleDto articleDto) {
         return this.articlesService.updateArticle(id, articleDto);
     }
 

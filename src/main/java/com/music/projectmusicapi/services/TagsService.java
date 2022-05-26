@@ -38,7 +38,7 @@ public class TagsService {
 
     public TagEntity getTag(Long id) {
         Optional<TagEntity> tag = this.tagRepository.findById(id);
-        if (tag.isEmpty())
+        if (!tag.isPresent())
             throw new HttpNotFoundException("Le tag avec l'id " + id + " n'a pas été trouvé");
         return tag.get();
     }

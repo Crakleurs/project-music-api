@@ -17,10 +17,11 @@ import java.util.Optional;
 public class ArticlesService {
     private final ArticleRepository articleRepository;
     private final ImagesService imagesService;
+    private final ArticleFactory articleFactory;
 
     public ArticleEntity getArticle(Long id) {
         Optional<ArticleEntity> articleEntity = this.articleRepository.findById(id);
-        if (articleEntity.isEmpty())
+        if (!articleEntity.isPresent())
             throw new HttpNotFoundException("L'article avec l'id " + id +" n'a pas été trouvé");
         return articleEntity.get();
     }
@@ -34,8 +35,7 @@ public class ArticlesService {
     }
 
     public ArticleEntity createArticle(ArticleDto articleDto) {
-        ArticleEntity articleEntity = ArticleFactory.toEntity(articleDto);
-
+        ArticleEntity articleEntity = this.articleFactory.toEntity(articleDto);
         return this.articleRepository.save(articleEntity);
     }
 
@@ -50,7 +50,7 @@ public class ArticlesService {
     public ArticleEntity updateArticle(Long id, ArticleDto articleDto) {
         ArticleEntity articleEntity = getArticle(id);
 
-        ArticleFactory.updateToEntity(articleDto, articleEntity);
+        this.articleFactory.updateToEntity(articleDto, articleEntity);
         return this.articleRepository.save(articleEntity);
     }
 }
