@@ -3,6 +3,8 @@ package com.music.projectmusicapi.entities;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.List;
@@ -20,13 +22,12 @@ public class ArticleEntity {
     @Column(nullable = false)
     private Float priceByDay;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<ImageEntity> images;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ManyToMany
-    private List<TagEntity> tags;
-
+    @ManyToOne
+    private CategoryEntity category;
 }

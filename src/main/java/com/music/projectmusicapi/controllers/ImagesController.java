@@ -6,9 +6,11 @@ import com.music.projectmusicapi.services.ImagesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @Validated
@@ -22,13 +24,18 @@ public class ImagesController {
         return this.imagesService.findImage(id);
     }
 
+    @GetMapping("/list/{articleId}")
+    public List<ImageEntity> getImages(@PathVariable Long articleId) {
+        return this.imagesService.findImages(articleId);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteImage(@PathVariable Long id) throws IOException {
         this.imagesService.deleteImage(id);
     }
 
-    @PostMapping("/{articleId}")
-    public Iterable<ImageEntity> createImages(@PathVariable Long articleId, @RequestBody ImageDto imageDto) {
-        return this.imagesService.createImages(articleId, imageDto);
+    @PostMapping(value = "/{articleId}")
+    public Iterable<ImageEntity> createImages(@PathVariable Long articleId, @RequestParam(value = "files",required = false) MultipartFile[] files) {
+        return this.imagesService.createImages(articleId, files);
     }
 }

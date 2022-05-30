@@ -19,5 +19,5 @@ public class ArticleDto {
     Float priceByDay;
 
     @NonNull
-    List<Long> tags;
+    Long category;
 }

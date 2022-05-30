@@ -1,31 +1,42 @@
 package com.music.projectmusicapi.dao.article;
 
-import com.music.projectmusicapi.dao.tag.TagRepository;
+import com.music.projectmusicapi.dao.CategoryRepository;
 import com.music.projectmusicapi.dto.ArticleDto;
 import com.music.projectmusicapi.entities.ArticleEntity;
-import com.music.projectmusicapi.entities.TagEntity;
+import com.music.projectmusicapi.entities.CategoryEntity;
+import com.music.projectmusicapi.exceptions.HttpNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
+@Component
 public class ArticleFactory {
-    private final TagRepository tagRepository;
+    private final CategoryRepository categoryRepository;
 
     public ArticleEntity toEntity(ArticleDto articleDto) {
-        Iterable<TagEntity> tagEntities = this.tagRepository.findAllById(articleDto.getTags());
+        Optional<CategoryEntity> categoryEntity = this.categoryRepository.findById(articleDto.getCategory());
+        if (!categoryEntity.isPresent())
+            throw new HttpNotFoundException("Pas de catégorie trouvée");
+
         ArticleEntity articleEntity = new ArticleEntity();
         articleEntity.setName(articleDto.getName());
         articleEntity.setDescription(articleDto.getDescription());
-        articleEntity.setTags((List<TagEntity>) tagEntities);
+        articleEntity.setCategory(categoryEntity.get());
+        articleEntity.setPriceByDay(articleDto.getPriceByDay());
+
         return  articleEntity;
     }
 
     public ArticleEntity updateToEntity(ArticleDto articleDto, ArticleEntity articleEntity) {
-        Iterable<TagEntity> tagEntities = this.tagRepository.findAllById(articleDto.getTags());
+        Optional<CategoryEntity> categoryEntity = this.categoryRepository.findById(articleDto.getCategory());
+        if (!categoryEntity.isPresent())
+            throw new HttpNotFoundException("Pas de catégorie trouvée");
+
         articleEntity.setName(articleDto.getName());
         articleEntity.setDescription(articleDto.getDescription());
-        articleEntity.setTags((List<TagEntity>) tagEntities);
+        articleEntity.setCategory(categoryEntity.get());
         return articleEntity;
     }
 }

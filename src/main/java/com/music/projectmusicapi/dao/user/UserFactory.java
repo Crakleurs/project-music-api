@@ -2,19 +2,27 @@ package com.music.projectmusicapi.dao.user;
 
 import com.music.projectmusicapi.dto.UserDto;
 import com.music.projectmusicapi.entities.UserEntity;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserFactory {
-    public static UserEntity toUser(UserDto userDto) {
+    private final PasswordEncoder passwordEncoder;
 
+    public UserFactory(@Lazy PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public UserEntity toUser(UserDto userDto) {
         UserEntity userEntity = new UserEntity();
         userEntity.setCoins(100F);
         userEntity.setEmail(userDto.getEmail());
-        userEntity.setFirstname(userDto.getFirstname());
-        userEntity.setName(userDto.getName());
+        userEntity.setFirstName(userDto.getFirstName());
+        userEntity.setLastName(userDto.getLastName());
         userEntity.setIsAdmin(false);
         userEntity.setIsBanned(false);
-        userEntity.setPassword(BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt()));
+        userEntity.setPassword(this.passwordEncoder.encode(userDto.getPassword()));
         return userEntity;
     }
 }

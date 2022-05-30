@@ -44,6 +44,7 @@ public class ArticlesService {
 
         List<ImageEntity> imageEntities = articleEntity.getImages();
         this.imagesService.deleteImages(imageEntities);
+        this.articleRepository.deleteById(id);
     }
 
 

@@ -18,10 +18,10 @@ public class UserEntity {
     private Long id;
 
     @Column()
-    private String firstname;
+    private String firstName;
 
     @Column()
-    private String name;
+    private String lastName;
 
     @Column(nullable = false)
     private String email;

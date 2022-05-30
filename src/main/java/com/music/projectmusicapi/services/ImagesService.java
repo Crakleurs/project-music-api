@@ -2,7 +2,6 @@ package com.music.projectmusicapi.services;
 
 import com.music.projectmusicapi.dao.article.ArticleRepository;
 import com.music.projectmusicapi.dao.image.ImageRepository;
-import com.music.projectmusicapi.dto.ImageDto;
 import com.music.projectmusicapi.entities.ArticleEntity;
 import com.music.projectmusicapi.entities.ImageEntity;
 import com.music.projectmusicapi.exceptions.HttpNotFoundException;
@@ -41,13 +40,13 @@ public class ImagesService {
     }
 
 
-    public Iterable<ImageEntity> createImages(Long articleId, ImageDto imageDto) {
+    public Iterable<ImageEntity> createImages(Long articleId, MultipartFile[] files) {
         Optional<ArticleEntity> articleEntity = this.articleRepository.findById(articleId);
         if (!articleEntity.isPresent())
             throw new HttpNotFoundException("L'article avec l'id " + articleId +" n'a pas été trouvé");
 
         List<ImageEntity> list = new ArrayList<>();
-        Arrays.stream(imageDto.getFiles()).forEach((file) -> {
+        Arrays.stream(files).forEach((file) -> {
             try {
                 ImageEntity imageEntity = storeImage(articleEntity.get(), file);
                 list.add(imageEntity);
@@ -86,5 +85,9 @@ public class ImagesService {
 
         });
         this.imageRepository.deleteAll(imageEntities);
+    }
+
+    public List<ImageEntity> findImages(Long articleId) {
+        return (List<ImageEntity>) this.imageRepository.findImageEntitiesByArticle_Id(articleId);
     }
 }

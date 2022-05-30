@@ -1,9 +1,11 @@
 package com.music.projectmusicapi.controllers;
 
+import com.music.projectmusicapi.dto.LoginDto;
 import com.music.projectmusicapi.dto.UserDto;
 import com.music.projectmusicapi.entities.UserEntity;
 import com.music.projectmusicapi.services.UsersService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,5 +34,15 @@ public class UsersController {
     @GetMapping("/{id}")
     public UserEntity findOne(@PathVariable Long id) {
         return usersService.findOne(id);
+    }
+
+    @GetMapping("/me")
+    public UserEntity findMe(Authentication authentication) {
+        return usersService.findMe(authentication);
+    }
+
+    @GetMapping("/reset")
+    public void resetDatabase() {
+        usersService.resetDatabase();
     }
 }

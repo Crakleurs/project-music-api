@@ -19,8 +19,13 @@ public class ArticlesController {
         return this.articlesService.findOne(id);
     }
 
-    @GetMapping()
+    @GetMapping("/items")
     public Iterable<ArticleEntity> findAll() {
+        return this.articlesService.findAll();
+    }
+
+    @GetMapping("/djs")
+    public Iterable<ArticleEntity> findAllDjs() {
         return this.articlesService.findAll();
     }
 

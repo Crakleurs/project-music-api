@@ -19,6 +19,6 @@ public class ImageEntity {
     @Column(nullable = false)
     private String path;
 
-    @ManyToOne
+    @ManyToOne()
     private ArticleEntity article;
 }
